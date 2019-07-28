@@ -5,4 +5,4 @@ COPY . .
 RUN yarn run build
 EXPOSE 7070
 
-CMD yarn start
+CMD yarn start:dev
