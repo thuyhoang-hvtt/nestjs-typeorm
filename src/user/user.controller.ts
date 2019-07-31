@@ -1,15 +1,19 @@
-import { Controller, Post, Body, BadRequestException, InternalServerErrorException, Get, Logger, Put, Param, NotFoundException, Delete } from '@nestjs/common';
+import { Controller, Post, Body, BadRequestException, InternalServerErrorException, Get, Logger, Put, Param, NotFoundException, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiOkResponse, ApiBadRequestResponse, ApiOperation, ApiUseTags, ApiInternalServerErrorResponse, ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiBadRequestResponse, ApiOperation, ApiUseTags, ApiInternalServerErrorResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { User } from './user.entity';
 import { ApiException } from '../shared/shared.api-exception';
 import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from './dto/index';
-import { MapperService } from '../shared/mapper/mapper.service';
 import { LoginResponseVM } from './vms/index';
 import { UpdateResult } from 'typeorm';
+import { Roles } from 'src/shared/shared.decorators';
+import { UserRole } from 'src/user/user.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from 'src/shared/shared.guard';
 
 @Controller('user')
 @ApiUseTags('Users')
+@ApiBearerAuth()
 export class UserController {
   constructor(
     private readonly _userService: UserService,
@@ -66,6 +70,8 @@ export class UserController {
   }
 
   @Get()
+  @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOkResponse({ type: User, isArray: true })
   @ApiBadRequestResponse({ type: ApiException })
   @ApiOperation({ title: 'User', operationId: 'findAll' })
@@ -74,6 +80,8 @@ export class UserController {
   }
 
   @Put(':id')
+  @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOkResponse({ type: User })
   @ApiInternalServerErrorResponse({ type: ApiException })
   @ApiOperation({ title: 'User', operationId: 'update' })
@@ -98,6 +106,8 @@ export class UserController {
   }
 
   @Delete(':id')
+  @Roles(UserRole.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @ApiOkResponse({ type: User })
   @ApiInternalServerErrorResponse({ type: ApiException })
   @ApiOperation({ title: 'User', operationId: 'delete' })
