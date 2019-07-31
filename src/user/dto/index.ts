@@ -1,4 +1,5 @@
 import { ApiModelProperty, ApiModelPropertyOptional } from "@nestjs/swagger";
+import { User } from "../user.entity";
 
 export class CreateUserDTO {
   @ApiModelProperty()
@@ -6,6 +7,17 @@ export class CreateUserDTO {
   
   @ApiModelProperty()
   password: string;
+
+  @ApiModelPropertyOptional()
+  firstName?: string;
+
+  @ApiModelPropertyOptional()
+  lastName?: string;
+}
+
+export class UpdateUserDTO {
+  @ApiModelPropertyOptional()
+  password?: string;
 
   @ApiModelPropertyOptional()
   firstName?: string;
